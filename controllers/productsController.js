@@ -25,6 +25,7 @@ exports.productCreate = async (req, res) => {
     }
 }
 
+
 //Modify a product
 exports.productUpdate = async (req, res) => {
     const { name, price, type } = req.body;
@@ -47,6 +48,7 @@ exports.productUpdate = async (req, res) => {
     }
 }
 
+
 //Get all products
 exports.productsList = async (req, res) => {
     try {
@@ -57,6 +59,7 @@ exports.productsList = async (req, res) => {
         res.status(400)
     }
 }
+
 
 //Get a product
 exports.product = async (req, res) => {
@@ -70,6 +73,7 @@ exports.product = async (req, res) => {
         res.status(400)
     }
 }
+
 
 //Delete a product
 exports.productDelete = async (req, res) => {

@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const Order = require('../models/Orders');
 const { mongo } = require('mongoose');
 
-
+//Order creation
 exports.orderCreate = async (req, res) => {
     try {
         const neworder = new Order(req.body);
@@ -17,6 +17,7 @@ exports.orderCreate = async (req, res) => {
 }
 
 
+//Update of a order
 exports.orderUpdate = async (req, res) => {
     const { products, status, client } = req.body;
     try {
@@ -38,6 +39,7 @@ exports.orderUpdate = async (req, res) => {
 }
 
 
+//Get all orders
 exports.orderList = async (req, res) => {
     try {
         const orders = await Order.find();
@@ -49,6 +51,7 @@ exports.orderList = async (req, res) => {
 }
 
 
+//Get a order
 exports.order = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id);
@@ -62,6 +65,7 @@ exports.order = async (req, res) => {
 }
 
 
+//Delete a order
 exports.orderDelete = async (req, res) => {
     try {
         const order = await Order.findByIdAndRemove(req.params.id);

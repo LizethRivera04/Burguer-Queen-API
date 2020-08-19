@@ -9,7 +9,7 @@ const User = require('../models/User');
 }
  */
 
-//add a user only if you are the admin
+//Add a user only if you are the admin
 exports.userCreate = async (req, res) => {
     const { email, password } = req.body;
 
@@ -63,7 +63,7 @@ exports.userModification = async (req, res) => {
 
 
 
-//get all users if you are admin
+//Get all users if you are admin
 exports.usersList = async (req, res) => {
     try {
         const users = await User.find();

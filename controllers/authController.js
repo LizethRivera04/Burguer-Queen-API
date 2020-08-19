@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 
 
-
+//User Authentication
 exports.userAuthentication = async (req, res) => {
     const { email, password } = req.body;
 
