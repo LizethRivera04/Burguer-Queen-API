@@ -3,7 +3,6 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
-const { verifyAdmin, verifyToken } = require('../middleware/auth');
 
 /* exports.userList = (req, res) => {
     console.info(req.query.page)//http://localhost:8080/users/?page=2 , <.req.query =  { page: '2' }, <.req.query.page = 2
@@ -12,11 +11,6 @@ const { verifyAdmin, verifyToken } = require('../middleware/auth');
 
 //add a user only if you are the admin
 exports.userCreate = async (req, res) => {
-    //validation of empty fields
-    const err = validationResult(req);
-    if (!err.isEmpty()) {
-        res.status(400).json({ errors: err })
-    }
     const { email, password } = req.body;
 
     try {
@@ -26,7 +20,7 @@ exports.userCreate = async (req, res) => {
             res.status(400).json({ msg: 'El usuario ya existe' })
         };
         newUser = new User(req.body);
-        console.log('newUser:', newUser);
+        //console.log('newUser:', newUser);
         //hashear password
         const salt = await bcryptjs.genSalt(10);
         newUser.password = await bcryptjs.hash(password, salt)
@@ -44,6 +38,31 @@ exports.userCreate = async (req, res) => {
     }
 }
 
+
+//Modify a user if has a token, is admin or user to modify
+exports.userModification = async (req, res) => {
+    if (req.userId === req.params.id) {
+        //console.log(req.userId, req.params.id);
+        console.log('user');
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        if (!user) {
+            res.status(404).json({ msg: 'Usuario no encontrado' })
+        }
+        res.status(200).json({ msg: 'Usuario actualizado', user: user })
+    } else if (req.userId === process.env.ADMIN_ID) {
+        console.log('admin');
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        if (!user) {
+            res.status(404).json({ msg: 'Usuario no encontrado' })
+        }
+        res.status(200).json({ msg: 'Usuario actualizado', user: user });
+    } else {
+        res.status(403).send('No tienes permiso para editar datos de este usuario');
+    }
+}
+
+
+
 //get all users if you are admin
 exports.usersList = async (req, res) => {
     try {
@@ -54,6 +73,8 @@ exports.usersList = async (req, res) => {
         res.status(400).json({ msg: err });
     }
 }
+
+
 
 //Get only a user if you are the user or admin
 exports.user = async (req, res) => {
@@ -68,33 +89,13 @@ exports.user = async (req, res) => {
     if (req.userId === process.env.ADMIN_ID) {
         console.log('admin');
         const user = await User.findById(req.params.id)
-        res.status(200).json(user, { msg: 'Usuario creado' });
+        res.status(200).json(user);
     } else {
         res.status(403).send('No tienes permiso para obtener datos de este usuario');
     }
 }
 
-//Modify a user if has a token, is admin or user to modify
-exports.userModification = async (req, res) => {
-    if (req.userId === req.params.id) {
-        console.log(req.userId, req.params.id);
-        console.log('user');
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
-        if (!user) {
-            res.status(404).json({ msg: 'Usuario no encontrado' })
-        }
-        res.status(200).json(user, { msg: 'Usuario actualizado' })
-    } else if (req.userId === process.env.ADMIN_ID) {
-        console.log('admin');
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
-        if (!user) {
-            res.status(404).json({ msg: 'Usuario no encontrado' })
-        }
-        res.status(200).json(user, { msg: 'Usuario actualizado' });
-    } else {
-        res.status(403).send('No tienes permiso para editar datos de este usuario');
-    }
-}
+
 
 //Modify a user if has a token, is admin or user to modify
 exports.userDeleted = async (req, res) => {

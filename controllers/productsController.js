@@ -1,19 +1,14 @@
 const express = require('express');
-const { validationResult } = require('express-validator');
 const Product = require('../models/Products');
 
 
 //Create a product
 exports.productCreate = async (req, res) => {
-    /*  const err = validationResult(req);
-     if (!err.isEmpty()) {
-         res.status(400).json({ errors: err })
-     } */
-
     const { name, price, type } = req.body;
-    if (name === '' || price === '') {
+    if (name === undefined || price === undefined || type === undefined) {
         res.status(400).json({ msg: 'Debes completar los campos nombre y precio del producto' })
     }
+
     const newProduct = {
         name: name,
         price: price,
@@ -32,14 +27,19 @@ exports.productCreate = async (req, res) => {
 
 //Modify a product
 exports.productUpdate = async (req, res) => {
-    //console.log(req.body.type === undefined);
-    const err = validationResult(req);
-    if (err.errors.length === 4) {
-        res.status(400).json({ errors: err })
+    const { name, price, type } = req.body;
+    if (name === undefined || price === undefined || type === undefined) {
+        res.status(400).json({ msg: 'Debes completar los campos nombre y precio del producto' })
     }
 
+    const newProduct = {
+        name: name,
+        price: price,
+        type: type,
+        image: req.file.path
+    }
     try {
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        const product = await Product.findByIdAndUpdate(req.params.id, newProduct, { new: true })
         if (!product) throw Error('Algo salió mal al modificar el producto');
         res.status(200).json(product)
     } catch (err) {
@@ -62,7 +62,9 @@ exports.productsList = async (req, res) => {
 exports.product = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
-        if (!product) throw Error('No se encontró el producto');
+        if (!product) {
+            res.status(400).json({ msg: 'No se encontró el producto' })
+        }
         res.status(200).json(product)
     } catch (err) {
         res.status(400)
@@ -73,7 +75,9 @@ exports.product = async (req, res) => {
 exports.productDelete = async (req, res) => {
     try {
         const product = await Product.findByIdAndRemove(req.params.id)
-        if (!product) throw Error('Error al eliminar el producto');
+        if (!product) {
+            res.status(400).json({ msg: 'Error al eliminar el producto' })
+        }
         res.status(200).json(product)
     } catch (err) {
         res.status(400)

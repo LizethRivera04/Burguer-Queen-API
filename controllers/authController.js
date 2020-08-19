@@ -7,11 +7,6 @@ const User = require('../models/User');
 
 
 exports.userAuthentication = async (req, res) => {
-    //validation of empty fields
-    const err = validationResult(req);
-    if (!err.isEmpty()) {
-        res.status(400).json({ errors: err })
-    }
     const { email, password } = req.body;
 
     try {
@@ -23,7 +18,7 @@ exports.userAuthentication = async (req, res) => {
         //checks if password is correct
         const passCorrect = await bcryptjs.compare(password, user.password)
         if (!passCorrect) {
-            return res.stauts(401).json({ msg: 'Password incorrecto' })
+            return res.status(401).json({ msg: 'Password incorrecto' })
         }
         //create jwt
         jwt.sign({ id: user._id, email: email, password: password }, process.env.JWT_SECRET, {

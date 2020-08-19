@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
 const { verifyToken } = require('../middleware/auth');
+const { validationEmpty, invalidStatus } = require('../middleware/error');
 const { check } = require('express-validator');
 
 
@@ -12,6 +13,7 @@ router.post('/',
         check('products', 'Tienes que agregar al menos un producto').isLength({ min: 1 })
     ],
     verifyToken,
+    validationEmpty,
     orderController.orderCreate
 )
 
@@ -25,6 +27,7 @@ router.put('/:id',
         check('status', 'Tienes que agregar un status válido').isLength({ min: 1 })
     ],
     verifyToken,
+    invalidStatus,
     orderController.orderUpdate
 );
 
@@ -35,7 +38,6 @@ router.get('/',
     verifyToken,
     orderController.orderList
 )
-
 
 
 //Get a order if have a token

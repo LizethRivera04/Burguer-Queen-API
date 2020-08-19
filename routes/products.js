@@ -31,7 +31,7 @@ router.put('/:id',
         check('type', 'Introduce el tipo/categoria del producto').isLength({ min: 1 })
     ],
     verifyAdmin,
-    //multer.single('image'),
+    multer.single('image'),
     productsController.productUpdate
 );
 
