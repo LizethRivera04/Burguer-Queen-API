@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const { validationResult } = require('express-validator');
 const Order = require('../models/Orders');
 const { mongo } = require('mongoose');
-const Products = require('../models/Products');
+
 
 exports.orderCreate = async (req, res) => {
     const err = validationResult(req);
@@ -26,7 +26,6 @@ exports.orderCreate = async (req, res) => {
 
 exports.orderUpdate = async (req, res) => {
     const { products, status, client } = req.body;
-
     //validation products or client isn´n empty
     const err = validationResult(req)
     if (err.errors.length === 2) {
@@ -37,29 +36,6 @@ exports.orderUpdate = async (req, res) => {
     }
 
     try {
-        /* const neworder = await Order.update({ _id: req.params.id, products._id: }).update({ "products.name": '' })
-        console.log(neworder); */
-
-        // update of all products with req.body.products
-        // const neworder = await Order.updateOne({ _id: req.params.id }, { $set: { products: req.body.products } })
-        //update add products without delete products saved
-        // const neworder = await Order.updateOne({ _id: req.params.id }, { $addToSet: { products: req.body.products } })
-        //update...
-        /*  let order = await Order.find({ _id: req.params.id, 'products.name': 'Jugo' }, { $set: { 'products.$.name': req.body.products } })
-         console.log(order); */
-
-
-        /*  const neworder = Order.updateOne({ _id: req.params.id, "products.name": element.name }, { $set: { "products.$.namee": req.body.products } })
-         console.log(neworder);
-         res.status(200).json(neworder) */
-        // const neworder = await Order.updateOne({ _id: req.params.id, "products.name":  }, { $set: { products: req.body.products } })
-        /*         console.log(neworder);
-                res.status(200).json(neworder) */
-
-
-
-
-
         let order = await Order.findById(req.params.id);
         order.userId = req.userId
         //console.log(order.products[0].quantity);
@@ -72,8 +48,6 @@ exports.orderUpdate = async (req, res) => {
         }
         order = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true })
         res.status(200).json({ order })
-
-
     } catch (err) {
         res.status(400)
     }

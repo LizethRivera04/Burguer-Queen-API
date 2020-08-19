@@ -12,11 +12,9 @@ const ProductsSchema = new Schema({
     },
     image: {
         type: String,
-
     },
     type: {
         type: String,
-
     },
     date: {
         type: Date,

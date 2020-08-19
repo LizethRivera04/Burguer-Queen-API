@@ -1,13 +1,14 @@
 //Erva2ThO1LiNnvgb
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const productsRoutes = require('./routes/products');
 const ordersRoutes = require('./routes/orders');
 const app = express();
+require('dotenv').config();
 
+let port = process.env.PORT || 8080
 
 //bodyParser middleware to read data from the user
 app.use(express.json());
@@ -18,7 +19,6 @@ app.use('/orders', ordersRoutes)
 app.get('/', (req, res) => {
     res.send('Welcome to Burguer Queen API !!')
 })
-
 
 
 //DB connection
@@ -33,6 +33,6 @@ mongoose.connect(process.env.DB_URL, {
 
 
 // server lift
-app.listen(process.env.PORT || 8080, () => {
-    console.log(`App listening on port ${process.env.PORT}`);
+app.listen(port, () => {
+    console.log(`App listening on port ${port}`);
 })

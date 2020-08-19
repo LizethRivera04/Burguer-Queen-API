@@ -8,7 +8,6 @@ const ProductSchema = new Schema({
     quantity: {
         type: Number
     }
-
 })
 
 const OrderShema = new Schema({
@@ -36,9 +35,6 @@ const OrderShema = new Schema({
     dateProcessed: {
         type: Date
     }
-
-
-
 })
 
 
