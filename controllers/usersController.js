@@ -12,7 +12,6 @@ const User = require('../models/User');
 //Add a user only if you are the admin
 exports.userCreate = async (req, res) => {
     const { email, password } = req.body;
-
     try {
         //checks if email exists in DB
         let newUser = await User.findOne({ email })
@@ -41,17 +40,24 @@ exports.userCreate = async (req, res) => {
 
 //Modify a user if has a token, is admin or user to modify
 exports.userModification = async (req, res) => {
+    const { email, password, roles } = req.body;
+    //hashear password
+    const salt = await bcryptjs.genSalt(10);
+    let updateUser = {
+        email: email,
+        password: await bcryptjs.hash(password, salt),
+        roles: roles
+    }
     if (req.userId === req.params.id) {
-        //console.log(req.userId, req.params.id);
         console.log('user');
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        const user = await User.findByIdAndUpdate(req.params.id, updateUser, { new: true })
         if (!user) {
             res.status(404).json({ msg: 'Usuario no encontrado' })
         }
         res.status(200).json({ msg: 'Usuario actualizado', user: user })
     } else if (req.userId === process.env.ADMIN_ID) {
         console.log('admin');
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        const user = await User.findByIdAndUpdate(req.params.id, updateUser, { new: true })
         if (!user) {
             res.status(404).json({ msg: 'Usuario no encontrado' })
         }
@@ -91,7 +97,7 @@ exports.user = async (req, res) => {
         const user = await User.findById(req.params.id)
         res.status(200).json(user);
     } else {
-        res.status(403).send('No tienes permiso para obtener datos de este usuario');
+        res.status(403).json({ msg: 'No tienes permiso para obtener datos de este usuario' });
     }
 }
 
@@ -115,6 +121,6 @@ exports.userDeleted = async (req, res) => {
         }
         res.status(200).json(user);
     } else {
-        res.status(403).send('No tienes permiso para eliminar datos de este usuario');
+        res.status(403).json({ msg: 'No tienes permiso para eliminar datos de este usuario' });
     }
 }
