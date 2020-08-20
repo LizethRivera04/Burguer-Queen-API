@@ -8,7 +8,7 @@ const ordersRoutes = require('./routes/orders');
 const app = express();
 require('dotenv').config();
 
-let port = process.env.PORT || 8080
+//let port = process.env.PORT || 8080
 
 //bodyParser middleware to read data from the user
 app.use(express.json());
@@ -33,6 +33,6 @@ mongoose.connect(process.env.DB_URL, {
 
 
 // server lift
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`);
+app.listen(process.env.PORT, () => {
+    console.log(`App listening on port ${process.env.PORT}`);
 })
